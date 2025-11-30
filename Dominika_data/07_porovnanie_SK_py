@@ -1,0 +1,46 @@
+import pandas as pd
+import glob
+
+kraje = ["BA", "BB", "NR", "TT", "PO", "KE", "TN", "ZA"]
+
+# Slovensko
+df_svk = pd.read_csv("slovensko_1975_2025.csv")
+df_svk['date'] = pd.to_datetime(df_svk['date'])
+svk_max_temp = df_svk['temp'].max()
+svk_min_temp = df_svk['temp'].min()
+svk_max_row = df_svk.loc[df_svk['temp'].idxmax()]
+svk_min_row = df_svk.loc[df_svk['temp'].idxmin()]
+
+results = []
+results.append({
+    "region": "Slovensko",
+    "max_temp": svk_max_temp,
+    "max_date": svk_max_row['date'],
+    "max_year": svk_max_row['date'].year,
+    "min_temp": svk_min_temp,
+    "min_date": svk_min_row['date'],
+    "min_year": svk_min_row['date'].year
+})
+
+# Kraje
+for idx, file in enumerate(sorted(glob.glob("pocasie_*.csv"))):
+    df = pd.read_csv(file)
+    df['date'] = pd.to_datetime(df['date'])
+    max_temp = df['temperature_2m'].max()
+    min_temp = df['temperature_2m'].min()
+    max_row = df.loc[df['temperature_2m'].idxmax()]
+    min_row = df.loc[df['temperature_2m'].idxmin()]
+    results.append({
+        "region": kraje[idx],
+        "max_temp": max_temp,
+        "max_date": max_row['date'],
+        "max_year": max_row['date'].year,
+        "min_temp": min_temp,
+        "min_date": min_row['date'],
+        "min_year": min_row['date'].year
+    })
+
+df_results = pd.DataFrame(results)
+df_results.to_csv("slovensko.csv", index=False)
+print("Export hotový: slovensko.csv")
+print(df_results)
