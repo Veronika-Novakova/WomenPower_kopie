@@ -1,0 +1,13 @@
+CREATE VIEW dbo.v_Mesta_CO2 AS
+SELECT 
+    m.Rok,
+    m.[Město],
+    m.[Pravda],
+    m.[Teplota],
+    m.[Déšť],
+    m.[Sníh],
+    c.mean AS CO2_mean,
+    c.unc  AS CO2_unc
+FROM dbo.Veronika_final_mesta AS m
+JOIN dbo.final_co2 AS c
+    ON c.year = m.Rok;
